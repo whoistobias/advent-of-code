@@ -1,5 +1,39 @@
 use std::{fs, time::Instant};
 
+fn main() -> std::io::Result<()> {
+    let contents = fs::read_to_string("src/bin/1/input.txt")?;
+
+    let start = Instant::now();
+
+    let instructions: Vec<(&str, &str)> = contents
+        .trim()
+        .split_whitespace()
+        .map(|v| v.split_at(1))
+        .collect();
+
+    let mut safe = SafeDial::new();
+
+    let mut zeroes = 0;
+    let mut total_zeroes = 0;
+
+    for instruction in instructions {
+        let found_zeroes = safe.turn(instruction);
+        total_zeroes += found_zeroes;
+        if safe.0 == 0 {
+            zeroes += 1;
+        }
+    }
+    let duration = start.elapsed();
+
+    println!(
+        "Stopped on {} zeroes and passed {} zeroes in {} milliseconds",
+        zeroes,
+        total_zeroes,
+        duration.as_micros() as f64 / 1000.
+    );
+    Ok(())
+}
+
 struct SafeDial(i32);
 
 impl SafeDial {
@@ -37,38 +71,4 @@ impl SafeDial {
             _ => unreachable!(),
         }
     }
-}
-
-fn main() -> std::io::Result<()> {
-    let contents = fs::read_to_string("src/bin/1/input.txt")?;
-
-    let start = Instant::now();
-
-    let instructions: Vec<(&str, &str)> = contents
-        .trim()
-        .split_whitespace()
-        .map(|v| v.split_at(1))
-        .collect();
-
-    let mut safe = SafeDial::new();
-
-    let mut zeroes = 0;
-    let mut total_zeroes = 0;
-
-    for instruction in instructions {
-        let found_zeroes = safe.turn(instruction);
-        total_zeroes += found_zeroes;
-        if safe.0 == 0 {
-            zeroes += 1;
-        }
-    }
-    let duration = start.elapsed();
-
-    println!(
-        "Stopped on {} zeroes and passed {} zeroes in {} milliseconds",
-        zeroes,
-        total_zeroes,
-        duration.as_micros() as f64 / 1000.
-    );
-    Ok(())
 }
