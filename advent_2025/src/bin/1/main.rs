@@ -1,4 +1,4 @@
-use std::{fs, time::Instant};
+use std::time::Instant;
 
 fn main() -> std::io::Result<()> {
     let contents = include_str!("input.txt");
