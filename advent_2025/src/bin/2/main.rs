@@ -1,7 +1,7 @@
 use std::{fs, time::Instant};
 
 fn main() -> std::io::Result<()> {
-    let contents = fs::read_to_string("src/bin/2/input.txt")?;
+    let contents = include_str!("input.txt");
     let start = Instant::now();
 
     let id_ranges = contents.trim().split(",").map(|range| {
