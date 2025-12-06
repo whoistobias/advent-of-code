@@ -47,17 +47,15 @@ fn pt1(input: &str) -> std::io::Result<()> {
 fn pt2(input: &str) -> std::io::Result<()> {
     let start = Instant::now();
 
-    let table = input.lines();
-    // .map(|row| row.split_whitespace().collect::<Vec<&str>>())
-    // .collect::<Vec<Vec<&str>>>();
-    let longest_line = table.clone().fold(0, |acc, v| acc.max(v.len()));
+    let table: Vec<&str> = input.lines().collect();
+    let longest_line = table.iter().fold(0, |acc, v| acc.max(v.len()));
     let table = table
+        .iter()
         .map(|line| format!("{:<longest_line$}", line).chars().collect())
         .collect::<Vec<Vec<char>>>();
 
     let cols = table.first().unwrap().len();
     let rows = table.len();
-    // println!("{:?}", cols);
 
     let mut sequence: Vec<String> = Vec::new();
 
@@ -75,7 +73,6 @@ fn pt2(input: &str) -> std::io::Result<()> {
         if operator != &' ' {
             sequence.push(operator.to_string());
         }
-        //         // let v = table.first().unwrap()[col];
     }
 
     let problems = sequence.iter().map(|v| v.trim()).collect::<Vec<&str>>();
