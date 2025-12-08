@@ -5,3 +5,5 @@
 - The `format!` macro can pad strings if you if like so: `format!("{:<length$}", string);`
 - You can't have reverse range literals (`15..0`), but you can do them by reversing a normal range e.g. (`0..15).rev()`)
 - There's some issue with `vec[i] = v` that can cause the rust-analyzer to freak out. You can get around it with `*vec.get_mut(i).unwrap() = v`
+- `BTreeMap` is a really useful map data structure where the keys are ordinal. It can produce ordered iterators.
+- You can implement operators for your types by implementing traits from `std::ops`
