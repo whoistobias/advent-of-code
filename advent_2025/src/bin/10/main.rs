@@ -132,7 +132,7 @@ fn pt2(input: &str) -> std::io::Result<()> {
     let mut button_presses = 0;
 
     for (len, _lights, buttons, joltages) in button_wiring_diagrams {
-        println!("{:?}", joltages);
+        // println!("{:?}", joltages);
 
         let starting_joltages = vec![0; len];
 
