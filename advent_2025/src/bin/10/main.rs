@@ -1,3 +1,4 @@
+use good_lp::{Expression, Solution, SolverModel, Variable, default_solver, variable, variables};
 use std::{
     cmp::Reverse,
     collections::{BTreeMap, BinaryHeap, HashSet, VecDeque},
@@ -135,7 +136,8 @@ fn pt2(input: &str) -> std::io::Result<()> {
 
         let starting_joltages = vec![0; len];
 
-        let result = search_for_joltage_combo(&starting_joltages, &joltages, &buttons);
+        let result =
+            search_for_joltage_combo_using_linear_algebra(&starting_joltages, &joltages, &buttons);
 
         button_presses += result;
     }
@@ -198,6 +200,48 @@ fn search_for_joltage_combo(
     // println!("{:?}", closed_list);
 
     panic!("Pathfinding failed");
+}
+
+fn search_for_joltage_combo_using_linear_algebra(
+    from: &Vec<u16>,
+    to: &Vec<u16>,
+    buttons: &Vec<u16>,
+) -> u32 {
+    let mut vars = variables!();
+
+    let presses: Vec<Variable> = (0..buttons.len())
+        .map(|_| vars.add(variable().min(0).integer()))
+        .collect();
+    let total_presses: Expression = presses.iter().sum();
+    let mut problem = vars.minimise(total_presses).using(default_solver);
+
+    for (jolt_idx, &target) in to.iter().enumerate() {
+        let mut expr = Expression::from(0.0);
+
+        for (btn_idx, button) in buttons.iter().enumerate() {
+            // if button is relevant, add its press variable to the constraint
+
+            for i in 0..u16::BITS as usize {
+                let bit = (button >> i) & 1;
+                if bit == 1 && i == jolt_idx {
+                    expr += presses[btn_idx];
+                }
+            }
+        }
+        // sum of relevant presses == target joltage
+        problem.add_constraint(expr.eq(target as f64));
+
+        // // sum of relevant presses == target joltage
+
+        // problem.add_constraint(expr.eq(target as f64));
+    }
+
+    let solution = problem.solve().unwrap();
+
+    presses
+        .iter()
+        .map(|v| solution.value(*v).round() as u32)
+        .sum()
 }
 
 fn joltage_heuristic(from: &Vec<u16>, to: &Vec<u16>) -> u16 {
